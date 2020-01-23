@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--bootstrap-->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+    <script src="js/jquery-3.3.1.min.js"></script>
+    <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
+    <script src="js/bootstrap.min.js"></script>
+    <title>共享单车</title>
+    <style>
+        html {
+            height: 100%;
+        }
+
+        body {
+            background-image: url('image/bgImgs/sspu.jpg');
+            padding: 0;
+            margin: 0;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+    </style>
+</head>
+<script>
+    var gly = $(".glyphicon");
+    var formGro = $(".form-group");
+
+    function checkUsername() {
+        var reg_username = /^[a-zA-Z0-9]+$/;
+        //获取用户名的值
+        var username = $("#username").val();
+        //获取正则表达式判断后的值
+        var flag = reg_username.test(username);
+        if (flag) {
+            $("#alert-username").html("");
+            $("#alert-password").html("");
+            gly.removeClass("glyphicon-remove");
+            formGro.removeClass("has-error");
+            /*checkUnique();*/
+        } else {
+            $("#alert-1").addClass("has-error");
+            $("#alert-username").html("用户名不能为空!");
+        }
+        return flag;
+    }
+
+    function checkPassword() {
+        var reg_password = /^[a-zA-Z0-9]+$/;
+        var password = $("#password").val();
+        var flag = reg_password.test(password);
+        if (flag) {
+            $("#alert-password").html("");
+            gly.removeClass("glyphicon-remove");
+            formGro.removeClass("has-error");
+        } else {
+            $("#alert-2").addClass("has-error");
+            $("#alert-password").html("密码不能为空!");
+        }
+        return flag;
+    }
+
+    $(function () {
+        $("#uid").blur(checkUsername);
+        $("#password").blur(checkPassword);
+        $("#loginForm").submit(function () {
+            var id = $("#uid").val();
+            var password = $("#password").val();
+            document.write(id);
+            if (checkUsername() && checkPassword()) {
+                //向后端发起Ajax请求
+                $.ajax({
+                    type: "post",
+                    url: "user/login.do",
+                    //此处的参数名字应该和controller中的方法的参数一致
+                    data: {"id": id, "password": password},
+                    //当前请求完成时运行的函数
+                    success: function (data, status, xhr) {
+                        var glyy = $(".glyphicon");
+                        var formG = $(".form-group");
+                        if (data.flag) {
+                            //登录成功
+                            glyy.removeClass("glyphicon-remove");
+                            formG.removeClass("has-error");
+                            glyy.addClass("glyphicon-ok");
+                            formG.addClass("has-success");
+                            console.log(status+"1596214589255");
+                            var a = xhr.getResponseHeader("Authorization");
+                            console.log(a);
+                            localStorage.setItem("access-token", a);
+                            sessionStorage.setItem("userInfo", JSON.stringify(data.data));//将json数据转化为字符串存储
+                            // 登录成功之后跳转的页面
+                            setTimeout(function () {
+                                location.href = "user.html"
+                            }, 500);
+                        } else {
+                            //登录失败，给出提示信息
+                            $("#alert-password").html(data.errorMsg);
+                            glyy.addClass("glyphicon-remove");
+                            formG.addClass("has-error");
+                        }
+                    }
+                });
+            }
+            return false;
+        });
+    })
+</script>
+<body>
+<div class="container">
+    <div class="row" style="margin-top: 200px;">
+        <div class="col-sm-2">
+        </div>
+        <div class="col-sm-1">
+        </div>
+        <div class="col-sm-6">
+            <div>
+                <form id="loginForm">
+                    <div class="form-group has-feedback" id="alert-1">
+                        <label class="control-label" for="uid">用户名</label>
+                        <input type="text" class="form-control" id="uid" placeholder="请输入学号/工号">
+                        <span class="help-block" id="alert-username" style="height: 10px;"></span>
+                        <span class="glyphicon form-control-feedback"></span>
+                    </div>
+                    <div class="form-group has-feedback" id="alert-2">
+                        <label class="control-label" for="password">密码</label>
+                        <input type="password" class="form-control" id="password" placeholder="请输入密码">
+                        <span class="help-block" id="alert-password" style="height: 10px;"></span>
+                        <span class="glyphicon form-control-feedback"></span>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox"> 记住我
+                        </label>
+                    </div>
+                    <button id="btn_login" type="submit" class="btn btn-warning btn-block">登录</button>
+                </form>
+            </div>
+        </div>
+        <div class="col-sm-1">
+        </div>
+        <div class="col-sm-2">
+        </div>
+    </div>
+</div>
+</body>
+</html>

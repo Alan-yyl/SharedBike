@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--namespace必须配置,配置该xml对应的接口文件-->
+<mapper namespace="edu.sspu.bike.mapper.UserMapper">
+    <select id="findById" parameterType="String" resultType="user">
+        select * from user where stuId=#{stuId}
+    </select>
+   <insert id="register">
+       insert into user values (#{Id},#{name},#{password},#{role})
+   </insert>
+</mapper>

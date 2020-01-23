@@ -1,0 +1,34 @@
+<!--<!DOCTYPE web-app PUBLIC-->
+<!-- "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"-->
+<!-- "http://java.sun.com/dtd/web-app_2_3.dtd" >-->
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" version="3.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+    <display-name>Archetype Created Web Application</display-name>
+    <!--   封装了一个监听器,帮助加载 Spring 的配置文件-->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    <!--  配置Spring,基于以下上下文创建ContextLoaderListener-->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:applicationContext.xml</param-value>
+    </context-param>
+    <!--    配置springmvc-->
+    <servlet>
+        <servlet-name>DispatcherServlet</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <!--    修改配置文件路径和名称-->
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:springmvc.xml</param-value>
+        </init-param>
+        <!--    自启动，tomcat启动时该类就会被加载-->
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DispatcherServlet</servlet-name>
+        <!--    SpringMVC框架只会拦截xxx.do这样的url,像.css , .js ,  .jpg等静态资源不会被拦截-->
+        <url-pattern>*.do</url-pattern>
+    </servlet-mapping>
+</web-app>

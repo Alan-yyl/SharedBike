@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/context
+		http://www.springframework.org/schema/context/spring-context-4.3.xsd
+        http://www.springframework.org/schema/beans
+		http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+		http://www.springframework.org/schema/mvc
+		http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+		http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+		http://www.springframework.org/schema/tx
+		http://www.springframework.org/schema/tx/spring-tx-4.3.xsd "
+       default-autowire="byName">
+
+
+    <!--    注解扫描-->
+    <context:component-scan base-package="edu.sspu.bike"/>
+    <!--    声明事务-->
+    <tx:annotation-driven/>
+    <!--    属性位置加载，导入参数配置文件-->
+    <context:property-placeholder location="classpath:druid.properties"/>
+
+    <!--    配置数据库连接,使用数据源封装类，数据源：获取数据库连接-->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <!--        driverClassName，必须这样写，setter/getter方法在转换时首字母需要小写-->
+        <property name="driverClassName" value="${test.druid.driverClassName}"/>
+        <property name="url" value="${test.druid.url}"/>
+        <property name="username" value="${test.druid.username}"/>
+        <property name="password" value="${test.druid.password}"/>
+    </bean>
+
+
+    <!--    整合Mybatis-->
+    <!--    构建会话工厂-->
+    <!--    SqlSessionFactoryBean 的 id 不能叫做 sqlSessionFactory-->
+    <bean id="sqlSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <!--设置数据源，注入上面配置的数据库连接对象-->
+                <property name="dataSource" ref="dataSource"/>
+        <!--        设置实体类所在的包,这个时候会自动取对应包中不包括包名的简单类名作为包括包名的别名-->
+        <property name="typeAliasesPackage" value="edu.sspu.bike.model"/>
+        <!--配置mapper映射文件,对应Mapper文件存放的位置-->
+        <property name="mapperLocations" value="classpath:edu/sspu/bike/mapper/*Mapper.xml"/>
+    </bean>
+    <!--    注入Mapper接口-->
+    <!--        添加MapperScannerConfigurer配置，负责扫描包下面的接口,并根据接口创建对象-->
+    <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <!--        Mapper接口所在的包-->
+        <property name="basePackage" value="edu.sspu.bike.mapper"/>
+    </bean>
+    <!--    配置事务管理组件-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    </bean>
+
+</beans>

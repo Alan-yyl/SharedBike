@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.sspu.bike.mapper.BikeInfoMapper">
+    <!--    返回BikeInfo表中的所有记录-->
+    <select id="selectAllBikeInfo" resultType="bikeinfo">
+        select * from bikeinfo
+    </select>
+    <!--    向BikeInfo中插入一条记录-->
+    <insert id="insertBikeInfo" parameterType="BikeInfo">
+        insert bikeinfo (bikeId,lockstatus,bikeLongitude,bikeLatitude,usecount)
+        values (#{bikeId},#{lockStatus},#{bikeLongitude},#{bikeLatitude},#{useCount})
+    </insert>
+    <!--    查询指定bikeId的序列，返回指定bikeId的使用次数-->
+    <select id="findById" parameterType="BikeInfo" resultType="BikeInfo">
+        select * from bikeinfo where bikeId=#{bikeId}
+    </select>
+    <!--    更新BikeInfo中的指定记录-->
+    <update id="updateBikeInfo" parameterType="BikeInfo">
+        update bikeinfo set
+        lockstatus=#{lockStatus},bikeLongitude=#{bikeLongitude},bikeLatitude=#{bikeLatitude},usecount=#{useCount} where bikeId=#{bikeId}
+    </update>
+
+    <!--    查询共享单车的使用次数-->
+    <select id="selectUsingTotal" resultType="int">
+        select sum(usecount) from bikeinfo
+    </select>
+    <!--    查询正在使用共享单车的数量-->
+    <select id="selectUserOfBikingTotal" resultType="int">
+        select count(lockstatus) from bikeinfo where lockstatus="1"
+    </select>
+<!--    根据bikeId修改车辆状态-->
+    <update id="updateLockStatus">
+        update bikeinfo set lockStatus=#{status} where bikeId=#{bikeId}
+    </update>
+</mapper>
