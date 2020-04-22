@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.sspu.bike.mapper.TripRecordMapper">
+    <!--    向bikerecord表中插入骑行记录记录-->
+    <insert id="insertTripRecord" parameterType="TripRecord">
+        insert into triprecord (rideDate,rideTime,rideDistance,bikeLongitude,bikeLatitude,speed,stuId,name)
+        values (#{rideDate},#{rideTime,jdbcType=VARCHAR},#{rideDistance,jdbcType=DOUBLE},
+        #{bikeLongitude,jdbcType=VARCHAR},#{bikeLatitude,jdbcType=VARCHAR},#{speed,jdbcType=VARCHAR},
+        #{stuId,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR})
+    </insert>
+
+    <select id="selectMyTrip" parameterType="User" resultType="TripRecord">
+        select * from triprecord where stuId=#{stuId}
+    </select>
+
+</mapper>

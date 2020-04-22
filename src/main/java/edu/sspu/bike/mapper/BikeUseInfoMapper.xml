@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="edu.sspu.bike.mapper.BikeUseInfoMapper">
+    <insert id="insertBikeUseInfo" parameterType="BikeUseInfo">
+        insert bikeuseinfo (stuId,name,bikeId,bikeLongitude,bikeLatitude)
+        values (#{stuId},#{name},#{bikeId},#{bikeLongitude},#{bikeLatitude})
+    </insert>
+<!--    查询车辆的使用情况-->
+    <select id="selectBikeUseInfo" resultType="BikeUseInfo">
+        select * from bikeuseinfo
+    </select>
+
+<!--    向车辆预约表中插入一条记录-->
+    <insert id="reserveBike" parameterType="Reservation">
+        insert into reservation (bikeId,appointment,stuId,name,submitTime)
+
+        values (#{bikeId},#{appointment},#{stuId},#{name},now())
+    </insert>
+</mapper>
