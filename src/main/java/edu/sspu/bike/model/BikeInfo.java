@@ -6,11 +6,15 @@ package edu.sspu.bike.model;
  * @date 2019/11/8 22:50
  */
 public class BikeInfo {
-    private String bikeId;  //车辆的编号（或者车锁的ip）
+    /**
+     *  车辆的编号（或者车锁的ip）
+     */
+    private String bikeId;
     private int lockStatus;
     private double bikeLongitude;
     private double bikeLatitude;
-    private int useCount=0; //使用次数
+    //使用次数
+    private int useCount=0;
     private String location;
 
     public BikeInfo() {
