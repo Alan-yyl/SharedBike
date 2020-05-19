@@ -3,12 +3,14 @@ package edu.sspu.bike.service.impl;
 import edu.sspu.bike.mapper.BikeInfoMapper;
 import edu.sspu.bike.model.BikeInfo;
 import edu.sspu.bike.model.EndTrip;
+import edu.sspu.bike.model.User;
 import edu.sspu.bike.service.BikeInfoService;
 import edu.sspu.bike.service.BikeUseInfoService;
 import edu.sspu.bike.service.base.BaseServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -125,27 +127,33 @@ public class BikeInfoServiceImpl extends BaseServiceImpl<BikeInfo> implements Bi
     }
 
     @Override
-    public BikeInfo openLock(String bikeId){
-        BikeInfo bikeInfo =findById(bikeId);
-        if (bikeInfo != null) {
-            if (bikeInfo.getLockStatus() == 0||bikeInfo.getLockStatus() == 2) {
+    public BikeInfo openLock(BikeInfo bikeInfo,User user){
+        BikeInfo existBike =findById(bikeInfo.getBikeId());
+        if (existBike != null) {
+            if (existBike.getLockStatus() == 0||existBike.getLockStatus() == 2) {
                 int status=1;
-                int useCount=bikeInfo.getUseCount()+1;
-                bikeInfoMapper.updateLockAndUseCount(status,useCount,bikeId);
+                int useCount=existBike.getUseCount()+1;
+                // bikeInfoMapper.updateLockAndUseCount(status,useCount,bikeInfo);
+                existBike.setBikeId(user.getStuId());
+                existBike.setLockStatus(status);
+                existBike.setUseCount(useCount);
+                bikeInfoMapper.updateBikeInfo(existBike);
             }
-            return bikeInfo;
+            return existBike;
         }
         return null;
     }
 
     @Override
-    public BikeInfo closeLock(String bikeId) {
-        BikeInfo bikeInfo =findById(bikeId);
-        if (bikeInfo != null) {
-            if (bikeInfo.getLockStatus() == 1) {
+    public BikeInfo closeLock(BikeInfo bikeInfo,User user) {
+        BikeInfo existBike =findById(bikeInfo.getBikeId());
+        if (existBike != null) {
+            if (existBike.getLockStatus() == 1) {
                 int status=0;
-                bikeInfoMapper.updateLockStatus(status, bikeId);
-                return bikeInfo;
+                //用户关锁以后，将车辆所属用户信息设置为null
+                existBike.setStuId(null);
+                bikeInfoMapper.updateBikeInfo(existBike);
+                return existBike;
             }
         }
         return null;

@@ -2,13 +2,11 @@ package edu.sspu.bike.web.controller;
 
 import edu.sspu.bike.model.BikeInfo;
 import edu.sspu.bike.model.ResultInfo;
+import edu.sspu.bike.model.User;
 import edu.sspu.bike.service.BikeInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -16,7 +14,7 @@ import java.util.List;
  * @auther 杨亚龙
  * @date 2019/11/9 23:20
  */
-@Controller
+@RestController
 @RequestMapping("/bikeinfo")
 public class BikeInfoController {
     @Autowired
@@ -49,16 +47,18 @@ public class BikeInfoController {
      * @return
      */
     @PostMapping("/openlock") @ResponseBody
-    public ResultInfo openLock(@RequestBody BikeInfo bikeInfo) {
-        System.out.println("BikeInfoController.openLock"+bikeInfo);
+    public ResultInfo openLock(@RequestParam String stuId, @RequestParam String bikeId) {
+        BikeInfo bikeInfo=new BikeInfo();
+        bikeInfo.setBikeId(bikeId);
+        User user = new User();
+        user.setStuId(stuId);
         ResultInfo resultInfo = new ResultInfo();
         //查询这辆车是否可以用（有没有被预约了）
-        BikeInfo isUse = bikeInfoService.openLock(bikeInfo.getBikeId());
-        System.out.println("BikeInfoController.openLock"+isUse);
-        // resultInfo.setData(isUse);
+        BikeInfo isUse = bikeInfoService.openLock(bikeInfo,user);
+        System.out.println("BikeInfoController.openLock"+isUse.toString());
         if (isUse != null) {
             if (isUse.getLockStatus() == 2) {
-                resultInfo.setFlag(false);
+                resultInfo.setFlag(true);
                 resultInfo.setErrorMsg("车辆已经被预约，请找其他车辆进行开锁");
             }else if (isUse.getLockStatus() == 1) {
                 resultInfo.setFlag(false);
@@ -75,10 +75,14 @@ public class BikeInfoController {
         return resultInfo;
     }
 
-    @PostMapping("/closeLock")@ResponseBody
-    public ResultInfo closeLock(@RequestBody BikeInfo bikeInfo){
+    @PostMapping("/closeLock")
+    public ResultInfo closeLock(@RequestParam String stuId, @RequestParam String bikeId){
+        BikeInfo bikeInfo=new BikeInfo();
+        bikeInfo.setBikeId(bikeId);
+        User user = new User();
+        user.setStuId(stuId);
         ResultInfo resultInfo = new ResultInfo();
-        BikeInfo isClose=bikeInfoService.closeLock(bikeInfo.getBikeId());
+        BikeInfo isClose=bikeInfoService.closeLock(bikeInfo,user);
         if (isClose != null) {
             resultInfo.setData(isClose);
             resultInfo.setFlag(true);

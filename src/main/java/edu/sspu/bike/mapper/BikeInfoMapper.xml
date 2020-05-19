@@ -15,9 +15,21 @@
         select * from bikeinfo where bikeId=#{bikeId}
     </select>
     <!--    更新BikeInfo中的指定记录-->
-    <update id="updateBikeInfo" parameterType="BikeInfo">
+    <update id="updateBikeInfo">
         update bikeinfo set
-        lockstatus=#{lockStatus},bikeLongitude=#{bikeLongitude},bikeLatitude=#{bikeLatitude},usecount=#{useCount} where bikeId=#{bikeId}
+        <if test="bikeInfo.lockStatus!=null">
+            lockstatus=#{bikeInfo.lockStatus}
+        </if>
+        <if test="bikeInfo.bikeLongitude!=null and bikeInfo.bikeLatitude!=null">
+            ,bikeLongitude=#{bikeInfo.bikeLongitude},bikeLatitude=#{bikeInfo.bikeLatitude}
+        </if>
+        <if test="bikeInfo.useCount!=null">
+            ,usecount=#{bikeInfo.useCount}
+        </if>
+        <if test="bikeInfo.stuId">
+            ,stuId=#{bikeInfo.stuId}
+        </if>
+        where bikeId=#{bikeInfo.bikeId}
     </update>
 
     <!--    查询共享单车的使用次数-->
@@ -28,14 +40,14 @@
     <select id="selectUserOfBikingTotal" resultType="int">
         select count(lockstatus) from bikeinfo where lockstatus="1"
     </select>
-<!--    根据bikeId修改车辆状态-->
+<!--    根据bikeId修改车锁状态、属于某个用户-->
     <update id="updateLockStatus">
-        update bikeinfo set lockStatus=#{status} where bikeId=#{bikeId}
+        update bikeinfo set lockStatus=#{status} ,userId =#{user.stuId}where bikeId=#{bikeinfo.bikeId}
     </update>
 
 <!--    修改车锁状态，同时，让车辆使用次数+1-->
     <update id="updateLockAndUseCount">
-        update bikeinfo set lockStatus=#{status},usecount=#{useCount} where bikeId=#{bikeId}
+        update bikeinfo set lockStatus=#{status},usecount=#{useCount} where bikeId=#{bikeInfo.bikeId}
     </update>
 
 </mapper>

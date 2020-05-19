@@ -19,6 +19,10 @@ public class User {
         this.name = name;
     }
 
+    public User(String stuId) {
+        this.stuId = stuId;
+    }
+
     public String getStuId() {
         return stuId;
     }

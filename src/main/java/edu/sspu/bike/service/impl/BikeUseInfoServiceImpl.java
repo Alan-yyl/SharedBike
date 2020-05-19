@@ -1,8 +1,6 @@
 package edu.sspu.bike.service.impl;
 
-import edu.sspu.bike.model.BikeUseInfo;
-import edu.sspu.bike.model.EndTrip;
-import edu.sspu.bike.model.Reservation;
+import edu.sspu.bike.model.*;
 import edu.sspu.bike.service.BikeUseInfoService;
 import edu.sspu.bike.service.base.BaseServiceImpl;
 import org.springframework.stereotype.Service;
@@ -20,11 +18,11 @@ public class BikeUseInfoServiceImpl extends BaseServiceImpl<BikeUseInfo> impleme
     @Override
     public boolean insertBikeUseRecord(EndTrip endTrip) {
         //将经纬度字符串转为double类型
-        double bikeLongitude=listStringToDouble(endTrip.getBikeLongtitude());
-        double bikeLatitude=listStringToDouble(endTrip.getBikeLongtitude());
+        double bikeLongitude = listStringToDouble(endTrip.getBikeLongtitude());
+        double bikeLatitude = listStringToDouble(endTrip.getBikeLongtitude());
         //构造车辆使用信息
-        BikeUseInfo bikeUseInfo = new BikeUseInfo(endTrip.getStuId(), endTrip.getName(), endTrip.getBikeId(),bikeLongitude,bikeLatitude);
-        System.out.println("BikeUseInfoServiceImpl.insertBikeUseRecord"+bikeUseInfo.toString());
+        BikeUseInfo bikeUseInfo = new BikeUseInfo(endTrip.getStuId(), endTrip.getName(), endTrip.getBikeId(), bikeLongitude, bikeLatitude);
+        System.out.println("BikeUseInfoServiceImpl.insertBikeUseRecord" + bikeUseInfo.toString());
         //插入车辆使用记录
         if (bikeUseInfoMapper.insertBikeUseInfo(bikeUseInfo) == 1) {
             return true;
@@ -34,7 +32,6 @@ public class BikeUseInfoServiceImpl extends BaseServiceImpl<BikeUseInfo> impleme
     }
 
     /**
-     *
      * @param listString String字符串，格式必须为：[小数,小数,小数]
      * @return Double类型对象数字
      */
@@ -57,13 +54,21 @@ public class BikeUseInfoServiceImpl extends BaseServiceImpl<BikeUseInfo> impleme
     @Override
     public Boolean reserveBike(Reservation reservation) {
         //向车辆预约表中插入信息
-        System.out.println("BikeUseInfoServiceImpl.reserveBike"+reservation.getBikeId());
-        return bikeUseInfoMapper.reserveBike(reservation)&& bikeInfoMapper.updateLockStatus(2, reservation.getBikeId());
+        BikeInfo bikeInfo = new BikeInfo();
+        bikeInfo.setBikeId(reservation.getBikeId());
+        bikeInfo.setLockStatus(2);
+        bikeInfo.setBikeId(reservation.getStuId());
+        System.out.println("BikeUseInfoServiceImpl.reserveBike" + reservation.getBikeId());
+        if (bikeInfoMapper.updateBikeInfo(bikeInfo) > 0) {
+            return bikeUseInfoMapper.reserveBike(reservation);
+        }else {
+            return false;
+        }
     }
 
     @Override
     public BikeUseInfo findById(String id) {
-       return null;
+        return null;
     }
 
     @Override

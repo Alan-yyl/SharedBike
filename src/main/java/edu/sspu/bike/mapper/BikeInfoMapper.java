@@ -2,6 +2,8 @@ package edu.sspu.bike.mapper;
 
 import edu.sspu.bike.mapper.base.BaseMapper;
 import edu.sspu.bike.model.BikeInfo;
+import edu.sspu.bike.model.Reservation;
+import edu.sspu.bike.model.User;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -24,7 +26,7 @@ public interface BikeInfoMapper extends BaseMapper<BikeInfo> {
     /**
      * 更新一条记录
      */
-    int updateBikeInfo(BikeInfo bikeInfo);
+    int updateBikeInfo(@Param("bikeInfo") BikeInfo bikeInfo);
 
     /**
      * 查询共享单车的使用次数，计算usercount
@@ -39,12 +41,12 @@ public interface BikeInfoMapper extends BaseMapper<BikeInfo> {
     /**
      * 根据bikeId修改车辆状态
      */
-    Boolean updateLockStatus(@Param("status")int status, @Param("bikeId")String bikeId);
+    Boolean updateLockStatus(@Param("status")int status, @Param("bikeInfo")BikeInfo bikeInfo,@Param("user") User user);
 
 
     /**
      * 修改车锁状态，同时，让车辆使用次数+1
      */
-    Boolean updateLockAndUseCount(@Param("status")int status,@Param("useCount") int useCount,@Param("bikeId")String bikeId);
+    Boolean updateLockAndUseCount(@Param("status")int status,@Param("useCount") int useCount,@Param("bikeInfo")BikeInfo bikeInfo);
 
 }

@@ -13,7 +13,6 @@
 <!--    向车辆预约表中插入一条记录-->
     <insert id="reserveBike" parameterType="Reservation">
         insert into reservation (bikeId,appointment,stuId,name,submitTime)
-
         values (#{bikeId},#{appointment},#{stuId},#{name},now())
     </insert>
 </mapper>
